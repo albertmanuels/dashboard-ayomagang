@@ -1,0 +1,1 @@
+export const JOB_TYPES = ['Full-Time', 'Part-Time', 'Remote', 'Internship'] as const
