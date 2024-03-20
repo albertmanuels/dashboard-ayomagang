@@ -1,5 +1,7 @@
 "use client";
+import CKEditor from "@/components/shared/CKEditor";
 import FieldInput from "@/components/shared/FieldInput";
+import InputSkills from "@/components/shared/InputSkills";
 import {
   Form,
   FormControl,
@@ -22,12 +24,13 @@ import { Separator } from "@/components/ui/separator";
 import { JOB_TYPES } from "@/constants";
 import { jobFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft } from "lucide-react";
-import React from "react";
+import { ArrowLeft, CrossIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const PostJobPage = () => {
+  const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
   const form = useForm<z.infer<typeof jobFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(jobFormSchema),
@@ -36,6 +39,10 @@ const PostJobPage = () => {
   const onSubmit = (data: z.infer<typeof jobFormSchema>) => {
     console.log("data: ", data);
   };
+
+  useEffect(() => {
+    setEditorLoaded(true);
+  }, [setEditorLoaded]);
 
   return (
     <div>
@@ -152,7 +159,6 @@ const PostJobPage = () => {
               />
             </div>
           </FieldInput>
-
           <FieldInput title="Categories" subtitle="You can select job category">
             <FormField
               control={form.control}
@@ -164,7 +170,7 @@ const PostJobPage = () => {
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <FormControl>
+                    <FormControl className="w-[450px]">
                       <SelectTrigger>
                         <SelectValue placeholder="Select Job Category" />
                       </SelectTrigger>
@@ -176,6 +182,52 @@ const PostJobPage = () => {
                   </Select>
                 </FormItem>
               )}
+            />
+          </FieldInput>
+          <FieldInput
+            title="Required Skills"
+            subtitle="Add required skills for the job"
+          >
+            <InputSkills form={form} />
+          </FieldInput>
+          <FieldInput
+            title="Job Description"
+            subtitle="Job titles must be describe one position"
+          >
+            <CKEditor
+              form={form}
+              name="jobDescription"
+              editorLoaded={editorLoaded}
+            />
+          </FieldInput>
+          <FieldInput
+            title="Responsibilities"
+            subtitle="Outline the core responsibilities of the position"
+          >
+            <CKEditor
+              form={form}
+              name="responsibility"
+              editorLoaded={editorLoaded}
+            />
+          </FieldInput>
+          <FieldInput
+            title="Who You Are"
+            subtitle="Add your preferred candidates qualifications"
+          >
+            <CKEditor
+              form={form}
+              name="whoYouAre"
+              editorLoaded={editorLoaded}
+            />
+          </FieldInput>
+          <FieldInput
+            title="Nice-To-Haves"
+            subtitle="Add nice-to-have skills and qualifications for the role to encourage a more diverse set of candidates to apply"
+          >
+            <CKEditor
+              form={form}
+              name="niceToHave"
+              editorLoaded={editorLoaded}
             />
           </FieldInput>
         </form>

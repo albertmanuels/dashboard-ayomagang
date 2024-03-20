@@ -1,5 +1,5 @@
 import { JOB_TYPES } from "@/constants"
-import {z, ZodEnum} from "zod"
+import {z} from "zod"
 
 export const jobFormSchema =  z.object({
   roles: z.string({required_error: "Job Title is required"}).min(3, {message: "Job Title must be at least 3 characters"}),
@@ -11,4 +11,5 @@ export const jobFormSchema =  z.object({
   responsibility: z.string({required_error: "Responsibility is required"}).min(10, {message: "Responsibility must be at least 10 characters"}),
   whoYouAre: z.string({required_error: "Who You Are is required"}).min(10, {message: "Who You Are must be at least 10 characters"}),
   niceToHave: z.string({required_error: "Nice to Have is required"}).min(10, {message: "Nice To Have must be at least 10 characters"}),
+  requiredSkills: z.string().array()
 })
