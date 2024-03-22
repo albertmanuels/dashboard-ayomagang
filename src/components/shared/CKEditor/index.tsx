@@ -14,7 +14,7 @@ const CKEditor = ({ form, name, editorLoaded }: CKEditorProps) => {
   return (
     <>
       {editorLoaded ? (
-        <>
+        <div>
           <TextEditor
             editor={ClassicEditor}
             data={form.getValues(name)}
@@ -32,7 +32,7 @@ const CKEditor = ({ form, name, editorLoaded }: CKEditorProps) => {
               </FormItem>
             )}
           />
-        </>
+        </div>
       ) : (
         <p>Loading...</p>
       )}

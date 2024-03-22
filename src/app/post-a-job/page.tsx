@@ -1,7 +1,9 @@
 "use client";
 import CKEditor from "@/components/shared/CKEditor";
 import FieldInput from "@/components/shared/FieldInput";
-import InputSkills from "@/components/shared/InputSkills";
+import { InputBenefits } from "@/components/shared/InputBenefit";
+import InputSkills from "@/components/shared/InputSkill";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -24,7 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import { JOB_TYPES } from "@/constants";
 import { jobFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, CrossIcon } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -154,6 +156,7 @@ const PostJobPage = () => {
                         placeholder="$1000"
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -230,6 +233,15 @@ const PostJobPage = () => {
               editorLoaded={editorLoaded}
             />
           </FieldInput>
+          <FieldInput
+            title="Perks and Benefits"
+            subtitle="Encourage more people to apply by sharing the attractive rewards and benefits you offer to your employees"
+          >
+            <InputBenefits form={form} />
+          </FieldInput>
+          <div className="flex justify-end">
+            <Button size="lg">Review</Button>
+          </div>
         </form>
       </Form>
     </div>

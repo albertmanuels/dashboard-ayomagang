@@ -13,11 +13,11 @@ import { useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
-type InputSKillsProps = {
+type InputSkillProps = {
   form: UseFormReturn<z.infer<typeof jobFormSchema>>;
 };
 
-const InputSkills = ({ form }: InputSKillsProps) => {
+const InputSkill = ({ form }: InputSkillProps) => {
   const [isHide, setIsHide] = useState(false);
   const [values, setValues] = useState<Array<string>>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -93,4 +93,4 @@ const InputSkills = ({ form }: InputSKillsProps) => {
   );
 };
 
-export default InputSkills;
+export default InputSkill;
