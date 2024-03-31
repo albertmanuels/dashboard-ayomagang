@@ -35,7 +35,7 @@ export const InputBenefits = ({ form }: InputBenefitsProps) => {
         {benefits.map((item: any, idx: number) => (
           <div
             key={idx}
-            className="border border-gray-200 rounded-sm p-3 relative min-w-[150px]"
+            className="border border-gray-200 rounded-sm p-3 relative min-w-[150px] max-w-[200px]"
           >
             <PartyPopper className="w-7 h-7 mb-5 text-primary" />
             <div

@@ -2,7 +2,7 @@
 import CKEditor from "@/components/shared/CKEditor";
 import FieldInput from "@/components/shared/FieldInput";
 import { InputBenefits } from "@/components/shared/InputBenefit";
-import InputSkills from "@/components/shared/InputSkill";
+import InputAddMultiple from "@/components/shared/InputAddMultiple";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,6 +27,7 @@ import { JOB_TYPES } from "@/constants";
 import { jobFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -48,10 +49,14 @@ const PostJobPage = () => {
 
   return (
     <div>
-      <div className="inline-flex items-center gap-2 cursor-pointer hover:text-primary">
-        <ArrowLeft className="w-7 h-7" />
-        <span className="text-2xl font-semibold">Post a Job</span>
+      <div className="inline-flex items-center gap-2">
+        <Link href="/" className="cursor-pointer">
+          <ArrowLeft className="w-7 h-7" />
+        </Link>
+
+        <h1 className="text-2xl font-semibold">Post a Job</h1>
       </div>
+
       <div className="my-5">
         <h4 className="text-lg font-semibold">Basic Information</h4>
         <h4 className="text-gray-400">List out your top perks and benefits</h4>
@@ -191,7 +196,11 @@ const PostJobPage = () => {
             title="Required Skills"
             subtitle="Add required skills for the job"
           >
-            <InputSkills form={form} />
+            <InputAddMultiple
+              form={form}
+              label="Add Skills"
+              name="requiredSkills"
+            />
           </FieldInput>
           <FieldInput
             title="Job Description"

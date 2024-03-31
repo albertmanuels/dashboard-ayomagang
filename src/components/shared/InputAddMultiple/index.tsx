@@ -7,17 +7,16 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { jobFormSchema } from "@/lib/form-schema";
 import { PlusIcon, X } from "lucide-react";
 import { useRef, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
 
-type InputSkillProps = {
-  form: UseFormReturn<z.infer<typeof jobFormSchema>>;
+type InputAddMultipleProps = {
+  form: any;
+  name: string;
+  label: string;
 };
 
-const InputSkill = ({ form }: InputSkillProps) => {
+const InputAddMultiple = ({ form, name, label }: InputAddMultipleProps) => {
   const [isHide, setIsHide] = useState(false);
   const [values, setValues] = useState<Array<string>>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -32,23 +31,23 @@ const InputSkill = ({ form }: InputSkillProps) => {
 
     setValues(newValue);
 
-    form.setValue("requiredSkills", newValue);
+    form.setValue(name, newValue);
     inputRef.current.value = "";
   };
 
   const handleDelete = (item: string) => {
-    const skills = values.filter((value: string) => item !== value);
-    setValues(skills);
-    form.setValue("requiredSkills", skills);
+    const items = values.filter((value: string) => item !== value);
+    setValues(items);
+    form.setValue(name, items);
   };
 
   return (
     <FormField
       control={form.control}
-      name="requiredSkills"
+      name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="block">Add Skills</FormLabel>
+          <FormLabel className="block">{label}</FormLabel>
           <FormControl>
             <>
               <Button
@@ -58,7 +57,7 @@ const InputSkill = ({ form }: InputSkillProps) => {
                 onClick={() => setIsHide(!isHide)}
               >
                 <PlusIcon className="w-4 h-4 mr-2" />
-                Add Skills
+                {label}
               </Button>
               {isHide && (
                 <div className="my-4 flex flex-row gap-4">
@@ -93,4 +92,4 @@ const InputSkill = ({ form }: InputSkillProps) => {
   );
 };
 
-export default InputSkill;
+export default InputAddMultiple;
