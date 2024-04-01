@@ -38,3 +38,21 @@ export const socialMediaFormSchema = z.object({
   youtube: z.string({required_error: "Youtube link is required"}),
   twitter: z.string({required_error: "Twitter link is required"}),
 })
+
+export const teamFormSchema = z.object({
+  name: z.string({required_error: "Name is required"}),
+  jobPosition: z.string({required_error: "Job position is required"}),
+  instagram: z.string({required_error: "Instagram is required"}),
+  linkedin: z.string({required_error: "Linkedin is required"})
+})
+
+export const signinFormSchema = z.object({
+  email: z.string({required_error: "Email is required"}).email({message: "Email is not valid"}),
+  password: z.string({required_error: "Password is required"})
+})
+
+export const signupFormSchema = z.object({
+  name: z.string({required_error: "Name is required"}),
+  email: z.string({required_error: "Email is required"}).email({message: "Email is not valid"}),
+  password: z.string({required_error: "Password is required"})
+})

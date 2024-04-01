@@ -1,5 +1,7 @@
+"use client";
 import OverviewForm from "@/components/forms/OverviewForm";
 import SocialMediaForm from "@/components/forms/SocialMediaForm";
+import TeamForm from "@/components/forms/TeamForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 
@@ -20,12 +22,7 @@ const SettingsPage = () => {
           <SocialMediaForm />
         </TabsContent>
         <TabsContent value="teams">
-          <p className="text-gray-500">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-            Perferendis, voluptatem accusamus reiciendis ullam porro alias
-            fugiat neque commodi dicta numquam, quis deserunt! Ipsa cumque culpa
-            voluptatem itaque perspiciatis nemo consequuntur.
-          </p>
+          <TeamForm />
         </TabsContent>
       </Tabs>
     </>

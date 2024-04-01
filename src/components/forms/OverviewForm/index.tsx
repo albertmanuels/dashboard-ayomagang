@@ -1,6 +1,5 @@
 "use client";
 import CustomUpload from "@/components/layouts/CustomUpload";
-import CKEditor from "@/components/shared/CKEditor";
 import FieldInput from "@/components/shared/FieldInput";
 import InputAddMultiple from "@/components/shared/InputAddMultiple";
 import TitleForm from "@/components/shared/TitleForm";
@@ -33,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -51,6 +51,10 @@ const OverviewForm = () => {
   useEffect(() => {
     setEditorLoader(true);
   }, []);
+
+  const Editor = dynamic(() => import("@/components/shared/CKEditor"), {
+    ssr: false,
+  });
 
   return (
     <>
@@ -246,7 +250,7 @@ const OverviewForm = () => {
               title="About Company"
               subtitle="Brief description for your company. Urls are hyperlinked"
             >
-              <CKEditor
+              <Editor
                 form={form}
                 name="description"
                 editorLoaded={editorLoaded}
