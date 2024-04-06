@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import bycrypt from "bcryptjs"
 import { any } from "zod"
+import Error from "next/error"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

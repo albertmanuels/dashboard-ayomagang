@@ -33,13 +33,18 @@ import { z } from "zod";
 import dynamic from "next/dynamic";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
+import { CategoryJob } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import moment from "moment";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
 const INITIAL_VALUES = {
   benefits: [],
   categoryId: "",
   jobDescription: "",
   jobType: undefined,
-  niceToHave: "",
+  niceToHaves: "",
   requiredSkills: [],
   responsibility: "",
   roles: "",
@@ -53,27 +58,62 @@ const Editor = dynamic(() => import("@/components/shared/CKEditor"), {
 });
 
 const PostJobPage = () => {
+  const router = useRouter();
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
+  const { data: session } = useSession();
   const form = useForm<z.infer<typeof jobFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(jobFormSchema),
     defaultValues: INITIAL_VALUES,
   });
 
-  const { data: categories, error } = useSWR(
-    () => "/api/job-categories",
+  const { data: categories } = useSWR<CategoryJob[]>(
+    "/api/job/categories",
     fetcher
   );
 
-  const onSubmit = (data: z.infer<typeof jobFormSchema>) => {
-    console.log("data: ", data);
+  const onSubmit = async (data: z.infer<typeof jobFormSchema>) => {
+    try {
+      const payload: any = {
+        applicants: 0,
+        benefits: data.benefits,
+        categoryId: data.categoryId,
+        companyId: session?.user.id!!,
+        datePosted: moment().toDate(),
+        description: data.jobDescription,
+        dueDate: moment().add(1, "M").toDate(),
+        jobType: data.jobType,
+        needs: 20,
+        niceToHaves: data.niceToHaves,
+        requiredSkills: data.requiredSkills,
+        responsibility: data.responsibility,
+        roles: data.roles,
+        salaryFrom: data.salaryFrom,
+        salaryTo: data.salaryTo,
+        whoYouAre: data.whoYouAre,
+      };
+
+      await fetch("api/job", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      router.push("/job-listings");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add a new job",
+        variant: "destructive",
+      });
+    }
   };
 
   useEffect(() => {
     setEditorLoaded(true);
   }, [setEditorLoaded]);
-
-  console.log("categories: ", categories);
 
   return (
     <div>
@@ -212,8 +252,11 @@ const PostJobPage = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="engineering">Engineering</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
+                      {categories?.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormItem>
@@ -260,7 +303,11 @@ const PostJobPage = () => {
             title="Nice-To-Haves"
             subtitle="Add nice-to-have skills and qualifications for the role to encourage a more diverse set of candidates to apply"
           >
-            <Editor form={form} name="niceToHave" editorLoaded={editorLoaded} />
+            <Editor
+              form={form}
+              name="niceToHaves"
+              editorLoaded={editorLoaded}
+            />
           </FieldInput>
           <FieldInput
             title="Perks and Benefits"

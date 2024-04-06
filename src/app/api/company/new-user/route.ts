@@ -10,9 +10,9 @@ export async function POST(req: Request) {
 
   const result = await prisma.company.create({ 
     data: {
-    name: data.name,
-    email: data.email,
-    password: hashedPassword
+      name: data.name,
+      email: data.email,
+      password: hashedPassword
   }})
 
   return NextResponse.json(result)
