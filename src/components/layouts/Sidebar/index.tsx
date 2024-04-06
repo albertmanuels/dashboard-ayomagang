@@ -12,8 +12,9 @@ import {
   Settings,
   Users,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 const SIDEBAR_MENU = [
@@ -50,6 +51,7 @@ const SIDEBAR_MENU = [
 ];
 
 const Sidebar = () => {
+  const router = useRouter();
   const pathname = usePathname();
   const currentPath = pathname.split("/")[1];
 
@@ -57,6 +59,10 @@ const Sidebar = () => {
     const result = currentPath === url.split("/")[1];
 
     return result;
+  };
+
+  const handleLogout = () => {
+    signOut();
   };
 
   return (
@@ -97,15 +103,14 @@ const Sidebar = () => {
               Settings
             </Button>
           </Link>
-          <Link href="/logout">
-            <Button
-              variant={"ghost"}
-              className="w-full text-red-500 hover:bg-red-200 hover:text-red-500 justify-start items-center border-none"
-            >
-              <LogOut className="mr-2" width={20} />
-              Logout
-            </Button>
-          </Link>
+          <Button
+            variant={"ghost"}
+            className="w-full text-red-500 hover:bg-red-200 hover:text-red-500 justify-start items-center border-none"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2" width={20} />
+            Logout
+          </Button>
         </div>
       </div>
     </aside>

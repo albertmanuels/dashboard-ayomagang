@@ -14,14 +14,44 @@ import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { signIn } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const SignInPage = () => {
+  const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signinFormSchema>>({
     resolver: zodResolver(signinFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const handleSignIn = (val: z.infer<typeof signinFormSchema>) => {
-    console.log(val);
+  const handleSignIn = async (val: z.infer<typeof signinFormSchema>) => {
+    const authenticated = await signIn("credentials", {
+      ...val,
+      redirect: false,
+    });
+
+    if (authenticated?.status === 200) {
+      toast({
+        title: "Success",
+        description: "Login success!",
+        variant: "default",
+        className: "bg-green-500 text-white",
+      });
+
+      router.push("/");
+    } else {
+      toast({
+        title: "Error",
+        description: "Email or Password is wrong!",
+        variant: "destructive",
+      });
+    }
   };
   return (
     <div className="relative w-full h-screen">
@@ -44,7 +74,7 @@ const SignInPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} placeholder="Email" />
+                      <Input {...field} type="email" placeholder="Email" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -56,7 +86,11 @@ const SignInPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} placeholder="Password" />
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Password"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

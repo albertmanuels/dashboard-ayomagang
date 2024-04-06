@@ -32,11 +32,26 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import dynamic from "next/dynamic";
 
+const INITIAL_VALUES = {
+  benefits: [],
+  categoryId: "",
+  jobDescription: "",
+  jobType: undefined,
+  niceToHave: "",
+  requiredSkills: [],
+  responsibility: "",
+  roles: "",
+  salaryFrom: "",
+  salaryTo: "",
+  whoYouAre: "",
+};
+
 const PostJobPage = () => {
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
   const form = useForm<z.infer<typeof jobFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(jobFormSchema),
+    defaultValues: INITIAL_VALUES,
   });
 
   const onSubmit = (data: z.infer<typeof jobFormSchema>) => {

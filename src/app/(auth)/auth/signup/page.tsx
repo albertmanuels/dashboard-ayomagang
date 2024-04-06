@@ -8,20 +8,43 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signinFormSchema, signupFormSchema } from "@/lib/form-schema";
+import { toast } from "@/components/ui/use-toast";
+import { signupFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const SignUpPage = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
+    defaultValues: {
+      name: "",
+      password: "",
+      email: "",
+    },
   });
 
-  const handleSignIn = (val: z.infer<typeof signupFormSchema>) => {
-    console.log(val);
+  const handleSignIn = async (val: z.infer<typeof signupFormSchema>) => {
+    try {
+      await fetch("/api/company/new-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(val),
+      });
+
+      router.push("/auth/signin");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Signup failed, please try again.",
+      });
+    }
   };
 
   return (
@@ -43,7 +66,7 @@ const SignUpPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} placeholder="Name" />
+                      <Input {...field} type="text" placeholder="Name" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -55,7 +78,7 @@ const SignUpPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} placeholder="Email" />
+                      <Input {...field} type="email" placeholder="Email" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -67,7 +90,11 @@ const SignUpPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} placeholder="Password" />
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Password"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
