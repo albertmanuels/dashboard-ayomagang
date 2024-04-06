@@ -31,6 +31,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import dynamic from "next/dynamic";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
 
 const INITIAL_VALUES = {
   benefits: [],
@@ -46,6 +48,10 @@ const INITIAL_VALUES = {
   whoYouAre: "",
 };
 
+const Editor = dynamic(() => import("@/components/shared/CKEditor"), {
+  ssr: false,
+});
+
 const PostJobPage = () => {
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
   const form = useForm<z.infer<typeof jobFormSchema>>({
@@ -54,17 +60,20 @@ const PostJobPage = () => {
     defaultValues: INITIAL_VALUES,
   });
 
+  const { data: categories, error } = useSWR(
+    () => "/api/job-categories",
+    fetcher
+  );
+
   const onSubmit = (data: z.infer<typeof jobFormSchema>) => {
     console.log("data: ", data);
   };
 
-  const Editor = dynamic(() => import("@/components/shared/CKEditor"), {
-    ssr: false,
-  });
-
   useEffect(() => {
     setEditorLoaded(true);
   }, [setEditorLoaded]);
+
+  console.log("categories: ", categories);
 
   return (
     <div>

@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import bycrypt from "bcryptjs"
+import { any } from "zod"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -14,4 +15,10 @@ export const comparePassword = async (password:  string, hashedPassword: string)
   const isPasswordMatch = await bycrypt.compare(password, hashedPassword)
 
   return isPasswordMatch
+}
+
+export async function fetcher<JSON = any> (input: RequestInfo, init?: RequestInit): Promise<JSON> {
+  const res = await fetch(input, init)
+
+  return res.json() as Promise<JSON>
 }
