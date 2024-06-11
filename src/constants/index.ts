@@ -31,7 +31,7 @@ export const jobListingData = [
 
 export const jobApplicantHeader = [
   "Name",
-  "Applied Date",
+  "Action"
 ]
 
 export const jobApplicantData = [

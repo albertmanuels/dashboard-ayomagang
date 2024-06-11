@@ -26,35 +26,101 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { employeeOptions, industryOptions, locationOptions } from "@/constants";
+import { useToast } from "@/components/ui/use-toast";
+import { employeeOptions, locationOptions } from "@/constants";
 import { overviewFormSchema } from "@/lib/form-schema";
-import { cn } from "@/lib/utils";
+import { supabaseUploadFile } from "@/lib/supabase";
+import { cn, fetcher } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CompanyOverview, Industry } from "@prisma/client";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 import { z } from "zod";
 
-const OverviewForm = () => {
-  const [editorLoaded, setEditorLoader] = useState(false);
+type OverviewFormProps = {
+  detail: CompanyOverview | undefined;
+};
+
+const Editor = dynamic(() => import("@/components/shared/CKEditor"), {
+  ssr: false,
+});
+
+const OverviewForm = ({ detail }: OverviewFormProps) => {
+  const { data: session } = useSession();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof overviewFormSchema>>({
     resolver: zodResolver(overviewFormSchema),
+    defaultValues: {
+      dateFounded: detail?.dateFounded,
+      description: detail?.description,
+      employee: detail?.employee,
+      image: detail?.image,
+      industry: detail?.industry,
+      location: detail?.location,
+      name: detail?.name,
+      techStack: detail?.techStack,
+      website: detail?.website,
+    },
   });
 
-  const handleOnSubmit = (val: z.infer<typeof overviewFormSchema>) => {
-    console.log(val);
+  const { data: industryData } = useSWR<Industry[]>(
+    "/api/company/industry",
+    fetcher
+  );
+
+  const industryOptions = industryData?.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
+
+  const onSubmit = async (val: z.infer<typeof overviewFormSchema>) => {
+    try {
+      let filename = "";
+
+      if (typeof val.image === "object") {
+        const uploadImg = await supabaseUploadFile(val.image, "company");
+        filename = uploadImg.filename;
+      } else {
+        filename = val.image;
+      }
+
+      const payload = {
+        ...val,
+        image: filename,
+        companyId: session?.user.id,
+      };
+
+      await fetch("/api/company/overview", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      toast({
+        title: "Success",
+        description: "Edit Profile Success",
+        variant: "success",
+      });
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Edit Profile Error, Try again",
+      });
+
+      console.error(error);
+    }
   };
-
-  useEffect(() => {
-    setEditorLoader(true);
-  }, []);
-
-  const Editor = dynamic(() => import("@/components/shared/CKEditor"), {
-    ssr: false,
-  });
 
   return (
     <>
@@ -67,10 +133,7 @@ const OverviewForm = () => {
       <Separator />
       <div className="my-5">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleOnSubmit)}
-            className="space-y-7"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">
             <FieldInput
               title="Company Logo"
               subtitle="This image will be shown publicly as company logo"
@@ -185,7 +248,7 @@ const OverviewForm = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {industryOptions.map((item) => (
+                            {industryOptions?.map((item) => (
                               <SelectItem key={item.value} value={item.value}>
                                 {item.label}
                               </SelectItem>
@@ -240,25 +303,21 @@ const OverviewForm = () => {
 
                 <InputAddMultiple
                   form={form}
-                  name="techstack"
+                  name="techStack"
                   label="Add Tech Stack"
                 />
               </div>
             </FieldInput>
-
             <FieldInput
               title="About Company"
               subtitle="Brief description for your company. Urls are hyperlinked"
             >
-              <Editor
-                form={form}
-                name="description"
-                editorLoaded={editorLoaded}
-              />
+              <Editor form={form} name="description" editorLoaded={true} />
             </FieldInput>
-            <div className="flex justify-end">
-              <Button size="lg">Save</Button>
-            </div>
+            <div className="flex justify-end"></div>
+            <Button type="submit" size="lg">
+              Save
+            </Button>
           </form>
         </Form>
       </div>

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PlusIcon, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type InputAddMultipleProps = {
   form: any;
@@ -41,6 +41,13 @@ const InputAddMultiple = ({ form, name, label }: InputAddMultipleProps) => {
     form.setValue(name, items);
   };
 
+  useEffect(() => {
+    const val = form.getValues(name);
+
+    if (val && val.length > 0) {
+      setValues(val);
+    }
+  }, [form, name]);
   return (
     <FormField
       control={form.control}

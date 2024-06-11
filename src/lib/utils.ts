@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge"
 import bycrypt from "bcryptjs"
 import { any } from "zod"
 import Error from "next/error"
+import moment from "moment"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -22,4 +23,8 @@ export async function fetcher<JSON = any> (input: RequestInfo, init?: RequestIni
   const res = await fetch(input, init)
 
   return res.json() as Promise<JSON>
+}
+
+export const formatDate = (date: Date, format: string = "DD MMM YYYY") => {
+  return moment(date).format(format)
 }

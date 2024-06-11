@@ -11,19 +11,60 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { socialMediaFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CompanySocialMedia } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const SocialMediaForm = () => {
+type SocialMediaFormProps = {
+  detail: CompanySocialMedia | undefined;
+};
+
+const SocialMediaForm = ({ detail }: SocialMediaFormProps) => {
+  const { data: session } = useSession();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof socialMediaFormSchema>>({
     resolver: zodResolver(socialMediaFormSchema),
+    defaultValues: {
+      facebook: detail?.facebook,
+      instagram: detail?.instagram,
+      linkedin: detail?.linkedin,
+      twitter: detail?.twitter,
+      youtube: detail?.youtube,
+    },
   });
 
-  const handleOnSubmit = (val: z.infer<typeof socialMediaFormSchema>) => {
-    console.log(val);
+  const handleOnSubmit = async (val: z.infer<typeof socialMediaFormSchema>) => {
+    try {
+      const payload = {
+        ...val,
+        companyId: session?.user.id,
+      };
+
+      await fetch("/api/company/social-media", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      toast({
+        title: "Success",
+        description: "Edit Social Media Success",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Edit Social Media Error, Try again",
+      });
+    }
   };
 
   return (
@@ -44,7 +85,7 @@ const SocialMediaForm = () => {
                     <Input
                       {...field}
                       className="w-[450px]"
-                      placeholder="https://www.yourLink.com"
+                      placeholder="https://www.facebook.com"
                     />
                   </FormControl>
                   <FormMessage />
@@ -61,7 +102,7 @@ const SocialMediaForm = () => {
                     <Input
                       {...field}
                       className="w-[450px]"
-                      placeholder="https://www.yourLink.com"
+                      placeholder="https://www.instagram.com"
                     />
                   </FormControl>
                   <FormMessage />
@@ -78,7 +119,7 @@ const SocialMediaForm = () => {
                     <Input
                       {...field}
                       className="w-[450px]"
-                      placeholder="https://www.yourLink.com"
+                      placeholder="https://www.linkedin.com"
                     />
                   </FormControl>
                   <FormMessage />
@@ -95,7 +136,7 @@ const SocialMediaForm = () => {
                     <Input
                       {...field}
                       className="w-[450px]"
-                      placeholder="https://www.yourLink.com"
+                      placeholder="https://www.youtube.com"
                     />
                   </FormControl>
                   <FormMessage />
@@ -112,7 +153,7 @@ const SocialMediaForm = () => {
                     <Input
                       {...field}
                       className="w-[450px]"
-                      placeholder="https://www.yourLink.com"
+                      placeholder="https://www.twitter.com"
                     />
                   </FormControl>
                   <FormMessage />
@@ -122,7 +163,9 @@ const SocialMediaForm = () => {
           </div>
         </FieldInput>
         <div className="flex justify-end">
-          <Button size="lg">Save</Button>
+          <Button type="submit" size="lg">
+            Save
+          </Button>
         </div>
       </form>
     </Form>

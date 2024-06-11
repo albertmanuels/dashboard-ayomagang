@@ -10,7 +10,7 @@ datasource db {
 model CategoryJob {
   id   String @id @default(cuid())
   name String
-  Job  Job[]
+  job  Job[]
 }
 
 model Industry {
@@ -23,10 +23,10 @@ model Company {
   name               String
   email              String               @unique
   password           String
-  CompanySocialMedia CompanySocialMedia[]
-  CompanyTeam        CompanyTeam[]
-  CompanyOverview    CompanyOverview[]
-  Job                Job[]
+  companyOverview    CompanyOverview[]
+  companySocialMedia CompanySocialMedia[]
+  companyTeam        CompanyTeam[]
+  job                Job[]
 }
 
 model CompanySocialMedia {
@@ -34,9 +34,10 @@ model CompanySocialMedia {
   instagram String
   twitter   String
   linkedin  String
+  facebook  String
   youtube   String
   companyId String?
-  Company   Company? @relation(fields: [companyId], references: [id])
+  company   Company? @relation(fields: [companyId], references: [id])
 }
 
 model CompanyTeam {
@@ -46,7 +47,7 @@ model CompanyTeam {
   linkedin  String
   instagram String
   companyId String?
-  Company   Company? @relation(fields: [companyId], references: [id])
+  company   Company? @relation(fields: [companyId], references: [id])
 }
 
 model CompanyOverview {
@@ -61,7 +62,7 @@ model CompanyOverview {
   techStack   String[]
   description String
   companyId   String?
-  Company     Company? @relation(fields: [companyId], references: [id])
+  company     Company? @relation(fields: [companyId], references: [id])
 }
 
 model Job {
@@ -82,9 +83,9 @@ model Job {
   benefits       Json
   companyId      String?
   categoryId     String?
-  CategoryJob    CategoryJob? @relation(fields: [categoryId], references: [id])
-  Company        Company?     @relation(fields: [companyId], references: [id])
-  Applicant      Applicant[]
+  applicant      Applicant[]
+  categoryJob    CategoryJob? @relation(fields: [categoryId], references: [id])
+  company        Company?     @relation(fields: [companyId], references: [id])
 }
 
 model User {
@@ -92,19 +93,19 @@ model User {
   name      String
   email     String      @unique
   password  String
-  Applicant Applicant[]
+  applicant Applicant[]
 }
 
 model Applicant {
   id               String  @id @default(cuid())
   userId           String?
-  User             User?   @relation(fields: [userId], references: [id])
   jobId            String?
-  Job              Job?    @relation(fields: [jobId], references: [id])
   previousJobTitle String
   phone            String
   linkedin         String
   portfolio        String
   coverLetter      String
   resume           String
+  job              Job?    @relation(fields: [jobId], references: [id])
+  user             User?   @relation(fields: [userId], references: [id])
 }

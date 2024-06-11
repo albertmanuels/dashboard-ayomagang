@@ -20,7 +20,7 @@ export const jobFormSchema =  z.object({
 
 
 export const overviewFormSchema = z.object({
-  image: z.any().refine(item => item?.name, {message: "Image is Required"}),
+  image: z.any(),
   name: z.string({required_error: "Name is required"}),
   website: z.string({required_error: "Website is required"}),
   location: z.string({required_error: "Location is required"}),
@@ -41,7 +41,7 @@ export const socialMediaFormSchema = z.object({
 
 export const teamFormSchema = z.object({
   name: z.string({required_error: "Name is required"}),
-  jobPosition: z.string({required_error: "Job position is required"}),
+  position: z.string({required_error: "Job position is required"}),
   instagram: z.string({required_error: "Instagram is required"}),
   linkedin: z.string({required_error: "Linkedin is required"})
 })

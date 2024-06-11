@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
           type: "password"
         }
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const user = await prisma.company.findFirst({
           where: {
             email: credentials?.email

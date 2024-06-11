@@ -8,6 +8,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+import { Toaster } from "@/components/ui/toaster";
+
+import { ToastProvider } from "@/components/ui/toast";
 
 const epilogue = Epilogue({ subsets: ["latin"] });
 
@@ -32,21 +35,24 @@ export default async function RootLayout({
       <body className={epilogue.className}>
         <main>
           <NextAuthProvider>
-            <div className="border-t">
-              <div className="bg-background">
-                <div className="flex flex-row">
-                  <div className="hidden lg:block w-[18%]">
-                    <Sidebar />
-                  </div>
-                  <div className="col-span-3 overflow-auto lg:col-span-5 lg:border-l w-[82%]">
-                    <div className="p-6 lg:px-8">
-                      <Header />
-                      {children}
+            <ToastProvider>
+              <div className="border-t">
+                <div className="bg-background">
+                  <div className="flex flex-row">
+                    <div className="hidden lg:block w-[18%]">
+                      <Sidebar />
+                    </div>
+                    <div className="col-span-3 overflow-auto lg:col-span-5 lg:border-l w-[82%]">
+                      <div className="p-6 lg:px-8">
+                        <Header />
+                        {children}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+              <Toaster />
+            </ToastProvider>
           </NextAuthProvider>
         </main>
       </body>

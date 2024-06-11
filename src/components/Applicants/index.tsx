@@ -8,9 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { jobApplicantData, jobApplicantHeader } from "@/constants";
+import { jobApplicantHeader } from "@/constants";
 
-const ApplicantContentSection = () => {
+type ApplicantsProps = {
+  applicants: any;
+};
+const Applicants = ({ applicants }: ApplicantsProps) => {
   return (
     <Table>
       <TableHeader>
@@ -22,15 +25,15 @@ const ApplicantContentSection = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {jobApplicantData.map((applicant, idx) => (
-          <TableRow key={idx}>
-            <TableCell>{applicant.name}</TableCell>
-            <TableCell>{applicant.appliedDate}</TableCell>
-          </TableRow>
-        ))}
+        {applicants &&
+          applicants.map((applicant: any, idx: number) => (
+            <TableRow key={idx}>
+              <TableCell>{applicant.name}</TableCell>
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   );
 };
 
-export default ApplicantContentSection;
+export default Applicants;

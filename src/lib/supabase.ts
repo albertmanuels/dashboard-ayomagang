@@ -1,8 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-
-
 const createId = (length:number) => {
   let result = ""
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -10,8 +8,8 @@ const createId = (length:number) => {
   
   let counter = 0
 
-  while(counter < length) {
-    result += characters.charAt(Math.floor(Math.random() + charactersLength))
+  while(counter <= length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
     counter += 1
   }
 
@@ -22,28 +20,34 @@ export const supabaseClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!
 
 export const supabaseUploadFile = async (file: File | string, bucket: "company" | "applicant") => {
 
-  const filename = `${createId(6)}.jpg`
-    const { data, error } = await supabaseClient
-      .storage
-      .from(bucket)
-      .upload(`public/${filename}`, file, {
-        cacheControl: '3600',
-        upsert: false
-      })
 
-    return {
-      data, 
-      error,
-      filename
-    }
+  const filename = `${createId(6)}.jpg`;
+
+
+  
+  const { data, error } = await supabaseClient
+    .storage
+    .from(bucket)
+    .upload(`public/${filename}`, file, {
+      cacheControl: '3600',
+      upsert: false
+    })
+  
+    console.log('data supabase client: ', data)
+
+  return {
+    data, 
+    error,
+    filename
   }
+}
 
 export const supabaseGetPublicUrl = (filename:string, bucket: "company" | "applicant") => {
 
     const { data } = supabaseClient
     .storage
     .from(bucket)
-    .getPublicUrl(`folder/${filename}`)
+    .getPublicUrl(`public/${filename}`)
 
     return {
       publicUrl: data.publicUrl
@@ -55,7 +59,7 @@ export const supabaseDeleteFile = async (filename: string, bucket: "company" | "
     const { data, error } = await supabaseClient
     .storage
     .from(bucket)
-    .remove([`folder/${filename}`])
+    .remove([`public/${filename}`])
 
     return {
       data,
